@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>PC端分页示例</title>
+
+		<link rel="stylesheet" href="css/paginationPC.css">
+		<script src="http://libs.baidu.com/jquery/1.10.2/jquery.js"></script>
+		<script type="text/javascript" src="js/paginationPC.js"></script>
+		<script type="text/javascript">
+		$(function(){
+			var page = new paginationPC('pageInnerContainer',{
+				currentPage:1,	//当前页码
+				showNum:4,	//一次加载数据个数（条数）默认为4个,后台必须传对应条数数据
+				ajaxEvent:function(me){	//数据加载接口 -- 使用者自定义数据加载方式
+					$.ajax({
+					    type: 'POST',
+					    url: 'server.php',
+					    data:{
+					      current:me.params.currentPage,
+					      showNum:me.params.showNum
+					    },
+					    dataType: 'json',
+					    beforeSend:function(){
+					      $.noop();
+					    },
+					    success: function(data){
+					      //得到后端传来的总页数
+					      me.params.pageAll = data.pageNum;
+					      //记录是否成功获取后台传回的总页数 -- 不能丢
+					      me.flag = true; 
+
+					      $('.mxSingleContainer').html('');
+					      var result = '';
+					      for(var i = 0; i < data.lists.length; i++){
+					            result += '<a class="mxSingleLink" href="'+data.lists[i].link+'"><div class="mxSingle"><img src="'+data.lists[i].address+'" /><h2>'+data.lists[i].title+'</h2><div class="mxSingleInfo"><div class="mxInfoTime">结束日期：<span class="mxTime">'+data.lists[i].time+'</span></div><div class="mxInfoPrice"><span class="mxDeletePrice">价值：￥'+data.lists[i].prevPrice+'</span><span class="mxPriceTitle">团购价</span><span class="mxPriceIcon">￥</span><span class="mxPrice">'+data.lists[i].currentPrice+'</span></div></div></div></a>';
+					        }
+					        $('.mxSingleContainer').append(result);
+
+
+
+					    },
+					    error: function(xhr, type){
+					        alert('Ajax error!');
+					    }
+					});
+				}
+			});
+		});
+		</script>
+	</head>
+	<body>
+        <div class="mxMainContainer">
+
+        	<div class="mxInnerContainer">
+
+	        	<div class="mxSingleContainer">
+	        		<!--<a class="mxSingleLink">
+	        			<div class="mxSingle">
+	        				<img src="http://pic2.ooopic.com/01/03/51/25b1OOOPIC19.jpg" />
+	        				<h2>
+	        					无锡中益国际商务酒店【行政大床房/标准双床房＋古运河 】
+	        				</h2>
+	        				<div class="mxSingleInfo">
+	        					<div class="mxInfoTime">
+	        						结束日期：
+	        						<span class="mxTime">2016.12.31</span>
+	        					</div>
+	        					<div class="mxInfoPrice">
+	        						<span class="mxDeletePrice">价值：￥1998</span>
+	        						<span class="mxPriceTitle">团购价</span>
+	        						<span class="mxPriceIcon">￥</span>
+	        						<span class="mxPrice">998</span>
+	        					</div>
+	        				</div>
+	        			</div>
+	        		</a>-->
+
+	        	</div>
+
+
+	        	<div class="pageContainer">
+	        		<div id="pageInnerContainer">
+	        			<!--分页数据-->        			
+	        		</div>
+	        	</div>
+        	</div>
+
+        </div>
+	</body>
+</html>
